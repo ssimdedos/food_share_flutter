@@ -4,7 +4,6 @@ import dotenv from 'dotenv';
 import path from 'path';
 import sequelize from "./src/config/database";
 import mainRouter from "./src/routers/mainRouter";
-import multer from "multer";
 
 dotenv.config();
 

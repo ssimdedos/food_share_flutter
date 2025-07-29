@@ -247,3 +247,8 @@ dist
 
 # SvelteKit build / generate output
 .svelte-kit
+
+# 업로드된 파일들
+/data/upload
+be/data
+be/data/upload
