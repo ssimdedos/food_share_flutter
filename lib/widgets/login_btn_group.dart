@@ -19,10 +19,11 @@ class _LoginBtnGroupState extends State<LoginBtnGroup> {
   }
 
   void _loginEmail() {
-    // MaterialApp에 routes를 정의했으므로 pushNamed 사용 권장
-    // Navigator.pushNamed(context, '/login_email');
-    // Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginEmail()));
     context.push('/login_email');
+  }
+
+  void _signup() {
+    context.push('/signup_email');
   }
 
   @override
@@ -48,6 +49,9 @@ class _LoginBtnGroupState extends State<LoginBtnGroup> {
       TextButton(onPressed: _login, child: const Text('카카오로 로그인')),
       verticalSpacer,
       TextButton(onPressed: _loginEmail, child: const Text('이메일로 로그인')),
+      verticalSpacer,
+      verticalSpacer,
+      TextButton(onPressed: _signup, child: const Text('회원가입')),
       verticalSpacer,
     ];
     return Column(

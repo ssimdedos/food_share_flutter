@@ -1,23 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:oasis/providers/auth_provider.dart';
+import 'package:provider/provider.dart';
 
 class LoginEmail extends StatelessWidget {
   const LoginEmail({super.key});
 
   @override
   Widget build(BuildContext context) {
-    void onLogin() {
-      context.go('/main');
-      // Navigator.pushNamed(context, '/main');
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => const IndexView()),
-      // );
+    final emailController = TextEditingController();
+    final passwordController = TextEditingController();
+    final authProvider = context.read<AuthProvider>();
+    void onLogin() async {
+      final res = await authProvider.login(email: emailController.text, password: passwordController.text);
+      if (res) {
+        context.go('/main');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('로그인 실패'))
+        );
+      }
     }
     
     final List<Widget> _loginBox = [
       TextField(
         keyboardType: TextInputType.emailAddress,
+        controller: emailController,
         decoration: const InputDecoration(
           labelText: '이메일',
           hintText: 'user@example.com',
@@ -28,6 +36,7 @@ class LoginEmail extends StatelessWidget {
       const SizedBox(height: 15.0),
       TextField(
         obscureText: true, // 비밀번호 숨김 처리
+        controller: passwordController,
         decoration: const InputDecoration(
           labelText: '비밀번호',
           hintText: '비밀번호를 입력하세요',
@@ -54,14 +63,22 @@ class LoginEmail extends StatelessWidget {
       )
     ];
     return Scaffold(
-      appBar: AppBar(title: const Text('이메일 로그인')),
-      body: Center( // Center로 감싸서 폼을 중앙에 배치
+      appBar: AppBar(
+        title: const Text('이메일 로그인'),
+        leading: IconButton(onPressed: () {
+          if(context.canPop()) {
+            context.pop();
+          } else {
+            context.go('/');
+          }
+        }, icon: const Icon(Icons.navigate_before)),
+      ),
+      body: Center(
         child: SingleChildScrollView( // 키보드 등 UI 오버플로우 방지
           child: Container(
             padding: const EdgeInsets.all(20.0),
             margin: const EdgeInsets.all(20.0),
-            // alignment: Alignment.center, // Column에서 mainAxisAlignment를 사용하므로 여기서는 필요 없음
-            decoration: BoxDecoration( // Material 위젯 추가로 인한 color 이동
+            decoration: BoxDecoration(
               color: Colors.amber,
               borderRadius: BorderRadius.circular(10.0),
               boxShadow: [

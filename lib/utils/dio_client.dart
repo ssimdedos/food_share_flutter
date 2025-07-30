@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -10,7 +11,6 @@ final dio = Dio(
     connectTimeout: const Duration(seconds: 10),
     receiveTimeout: const Duration(seconds: 10),
     headers: {
-      // 'Content-Type': 'application/json',
       'Accept': 'application/json',
     }
   )
@@ -20,26 +20,38 @@ final FlutterSecureStorage storage = FlutterSecureStorage();
 void setupDioClient() {
   dio.interceptors.add(InterceptorsWrapper(
     onRequest: (options, handler) async {
-      String? token;
-      try {
-        token = await storage.read(key: 'jwt_token');
-      } on PlatformException catch (e) {
-        if (e.code == 'Libsecret error') {
-          print('Libsecret error: Failed to unlock the keyring. Proceeding without token for now.');
-        } else {
-          rethrow;
-        }
-      }
+      final accessToken = await storage.read(key: 'jwt_access_token');
 
-      if (token != null) {
-        options.headers['Authorization'] = 'Bearer $token';
+      if (accessToken != null) {
+        options.headers['Authorization'] = 'Bearer $accessToken';
       }
       return handler.next(options);
     },
     onError: (DioException error, handler) async {
       if (error.response?.statusCode == 401) {
+        final refreshToken = await storage.read(key: 'jwt_refresh_token');
+        if (refreshToken != null) {
+          try{
+            final refreshDio = Dio(BaseOptions(baseUrl: dio.options.baseUrl));
+            final refreshRes = await refreshDio.post('/user/refresh-token',
+              data: { 'refreshToken': refreshToken }
+            );
+            if (refreshRes.statusCode == 200) {
+              final newAccessToken = refreshRes.data['accessToken'];
+              await storage.write(key: 'jwt_access_token', value: newAccessToken);
+
+              error.requestOptions.headers['Authorization'] = 'Baerer $newAccessToken';
+              return handler.resolve(await dio.fetch(error.requestOptions));
+            }
+          } catch (e) {
+            if (kDebugMode) {
+              print('리프레시 토큰 갱신 실패: $e');
+            }
+            await storage.delete(key: 'jwt_access_token');
+            await storage.delete(key: 'jwt_refresh_token');
+          }
+        }
         try {
-          await storage.delete(key: 'jwt_token');
           print('Token deleted due to 401.');
         } on PlatformException catch (e) {
           print('Error deleting token from secure storage: ${e.message}');

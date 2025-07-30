@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:oasis/providers/auth_provider.dart';
 import 'package:oasis/providers/food_post_provider.dart';
 import 'package:oasis/providers/theme_notifier.dart';
 import 'package:oasis/utils/dio_client.dart';
@@ -6,12 +7,13 @@ import 'package:oasis/utils/go_router.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  // setupDioClient();
+  setupDioClient();
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => ThemeNotifier(false)),
-        ChangeNotifierProvider(create: (context) => FoodPostProvider())
+        ChangeNotifierProvider(create: (context) => FoodPostProvider()),
+        ChangeNotifierProvider(create: (context) => AuthProvider())
       ],
       child: const OasisApp(),
     ),

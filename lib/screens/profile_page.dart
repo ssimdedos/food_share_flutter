@@ -1,35 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oasis/models/model.dart';
+import 'package:oasis/providers/auth_provider.dart';
 import 'package:oasis/providers/theme_notifier.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
+
+
   
   @override
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  User user = User(
-    id:1,
-    email: 'ideademisdedos@gmail.com',
-    username: 'ssim',
-  );
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+    void _logout () async {
+      final res = await authProvider.logout();
+      if (res) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('로그아웃 되었습니다.')),
+        );
+        context.go('/');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('로그아웃 실패')),
+        );
+      }
+    }
     return Scaffold(
       appBar: AppBar(title: const Text('마이 페이지')),
       body: Center(
         child: ListView(
           children: [
-            _buildProfileHeader(user),
-            _buildMenuList(context),
+            _buildProfileHeader(authProvider.currentUser),
+            _buildMenuList(context, _logout),
             Consumer<ThemeNotifier>(
               builder: (context, themeNotifier, child) {
-                return Card( // TextButtonSwitches 대신 Card를 직접 사용 (코드 간결화)
+                return Card(
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: IntrinsicWidth(
@@ -85,7 +97,7 @@ Widget _buildProfileHeader(User? user) {
   );
 }
 
-Widget _buildMenuList(BuildContext context) {
+Widget _buildMenuList(BuildContext context, onLogout) {
   return Column(
     children: [
       ListTile(
@@ -137,12 +149,7 @@ Widget _buildMenuList(BuildContext context) {
         leading: const Icon(Icons.logout, color: Colors.red),
         title: const Text('로그아웃', style: TextStyle(color: Colors.red)),
         onTap: () {
-          // 로그아웃 후 로그인 화면으로 이동
-          // Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
-          context.go('/');
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('로그아웃 되었습니다.')),
-          );
+          onLogout();
         },
       ),
     ],

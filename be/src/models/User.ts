@@ -51,3 +51,5 @@ User.init({
   tableName:'users',
   paranoid:true
 });
+
+export default User;

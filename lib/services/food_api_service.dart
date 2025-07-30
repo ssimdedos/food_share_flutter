@@ -11,7 +11,7 @@ class FoodApiService {
 
   Future<List<FoodPostForBoard>> getFoodPosts() async {
     try {
-      final res = await _dio.get('/foodPosts');
+      final res = await _dio.get('/food-posts');
       if (res.statusCode == 200) {
         List<dynamic> data = res.data;
         return data.map((item) => FoodPostForBoard.fromJson(item)).toList();
@@ -52,7 +52,7 @@ class FoodApiService {
         "images": futures,
         "expirationDate": expirationDate.toIso8601String()
       });
-      final res = await _dio.post('/foodPosts', data: formData);
+      final res = await _dio.post('/food-posts', data: formData);
       if (res.statusCode == 201) {
         return CreatedPost(id: res.data?['id'], success: true);
       } else {
@@ -65,7 +65,7 @@ class FoodApiService {
 
   Future<FoodPost> getFoodPost (int postId) async {
     try {
-      final res = await _dio.get('/foodPosts/post/$postId');
+      final res = await _dio.get('/food-posts/post/$postId');
       if (res.statusCode == 200) {
         return FoodPost.fromJson(res.data);
       } else {

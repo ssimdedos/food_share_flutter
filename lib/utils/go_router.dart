@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:oasis/screens/login_email.dart';
-import 'package:oasis/screens/login_home_page.dart';
+import 'package:oasis/screens/auth/login_email.dart';
+import 'package:oasis/screens/auth/login_home_page.dart';
+import 'package:oasis/screens/auth/signup_email.dart';
 import 'package:oasis/screens/post/post_detail_page.dart';
 import 'package:oasis/widgets/bottom_navigation_bar.dart';
 
@@ -18,6 +19,10 @@ final GoRouter goRouter = GoRouter(
     GoRoute(
       path: '/login_email',
       builder: (BuildContext context, GoRouterState state) => const LoginEmail()
+    ),
+    GoRoute(
+      path: '/signup_email',
+      builder: (BuildContext context, GoRouterState state) => const SignupEmail()
     ),
     GoRoute(
       path: '/post/:id',
