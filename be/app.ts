@@ -5,9 +5,17 @@ import path from 'path';
 import sequelize from "./src/config/database";
 import mainRouter from "./src/routers/mainRouter";
 
+// 채팅 관련
+import http from 'http';
+import { createStompServerSession } from "stomp-protocol";
+import { WebSocket, WebSocketServer } from 'ws';
+
 dotenv.config();
 
 const app: Express = express();
+const httpServer = http.createServer(app);
+
+const wss = new WebSocket.Server({ server:httpServer, path:'/chat' });
 
 app.use(cors());
 app.use(express.json());
