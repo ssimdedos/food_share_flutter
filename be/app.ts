@@ -7,15 +7,12 @@ import mainRouter from "./src/routers/mainRouter";
 
 // 채팅 관련
 import http from 'http';
-import { createStompServerSession } from "stomp-protocol";
-import { WebSocket, WebSocketServer } from 'ws';
+import { initWebSocketServer } from "./src/websocket";
 
 dotenv.config();
 
 const app: Express = express();
 const httpServer = http.createServer(app);
-
-const wss = new WebSocket.Server({ server:httpServer, path:'/chat' });
 
 app.use(cors());
 app.use(express.json());
@@ -41,12 +38,15 @@ app.use('/', (req, res) => {
   res.status(200).json(`클라이언트 IP: ${clientIp}, 모든 클라이언트 IP: ${clientIps}`);
 });
 
-const PORT: number = parseInt(process.env.PORT as string, 10) || 3000;
+const PORT: number = parseInt(process.env.PORT as string, 10) || 3037;
+const WEB_SOCKET_PORT:number = parseInt(process.env.WEB_SOCKET_PORT as string, 10) || 3039;
 
 sequelize.sync().then(() => {
-  app.listen(PORT, () => {
+  httpServer.listen(PORT, () => {
     console.log(`SERVER is running on port ${PORT}`);
   });
 }).catch(err => {
   console.error('서버 실행 불가능, ', err);
 });
+
+initWebSocketServer(null, WEB_SOCKET_PORT);

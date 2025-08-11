@@ -21,9 +21,7 @@ class AuthService {
     }
   }
 
-  Future<User?> login(String email, String password) async {
-    print('로그인 하러 감');
-    print('$email');
+  Future<User> login(String email, String password) async {
     try {
       final res = await _dio.post('/user/login',
         data: { 'email' : email, 'password' : password}
@@ -31,18 +29,22 @@ class AuthService {
       if (res.statusCode == 200) {
         final accessToken = res.data['accessToken'];
         final refreshToken = res.data['refreshToken'];
-        print(accessToken);
-        print(refreshToken);
         await _storage.write(key: 'jwt_access_token', value: accessToken);
         await _storage.write(key: 'jwt_refresh_token', value: refreshToken);
         final user = User.fromJson(res.data['user']);
         print('User.fromJson, $user');
         return user;
+      } else {
+        throw DioException(
+          requestOptions: res.requestOptions,
+          response: res,
+          type: DioExceptionType.badResponse,
+          error: 'Login failed with status: ${res.statusCode}',
+        );
       }
-      return null;
     } on DioException catch (err) {
       print('로그인 실패: ${err.response?.data ?? err.message}');
-      return null;
+      rethrow;
     }
   }
 

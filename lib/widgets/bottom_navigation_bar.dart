@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oasis/models/model.dart';
 import 'package:oasis/screens/board_page.dart';
+import 'package:oasis/screens/chat_list_page.dart';
 import 'package:oasis/screens/post/post_upload_page.dart';
 import 'package:oasis/screens/profile_page.dart';
 
@@ -18,7 +19,13 @@ List<NavItem> _navItems = [
     label: '등록',
   ),
   NavItem(
-    index: 2,
+      index: 2,
+      activeIcon: Icons.chat_bubble,
+      inactiveIcon: Icons.chat_bubble_outline_outlined,
+      label: '채팅'
+  ),
+  NavItem(
+    index: 3,
     activeIcon: Icons.person_2,
     inactiveIcon: Icons.person_4_outlined,
     label: '마이페이지',
@@ -64,6 +71,7 @@ class _IndexViewState extends State<IndexView> with SingleTickerProviderStateMix
         children: [
           BoardPage(),
           PostUploadPage(),
+          ChatListPage(),
           ProfilePage(),
         ],
       ),

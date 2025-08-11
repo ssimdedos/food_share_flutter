@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:oasis/models/model.dart';
 import 'package:oasis/services/auth_service.dart';
 
-enum AuthState {initial, loading, success, error}
+enum AuthState {initial, loading, success, error, authFailed}
 
 class AuthProvider extends ChangeNotifier {
   final AuthService _authApi = AuthService();
@@ -22,7 +22,7 @@ class AuthProvider extends ChangeNotifier {
     _errorMessage = '';
     notifyListeners();
     try {
-      final User? user = await _authApi.login(email, password);
+      final User user = await _authApi.login(email, password);
       print('반환된 User 객체: $user');
       _currentUser = user;
       _state = AuthState.success;
@@ -32,16 +32,16 @@ class AuthProvider extends ChangeNotifier {
 
       if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
         _errorMessage = e.response?.data['message'] ?? '이메일 또는 비밀번호가 올바르지 않습니다.';
-        _state = AuthState.error; // ⭐️ 인증 실패 전용 상태
+        _state = AuthState.authFailed;
       } else {
         _errorMessage = e.response?.data['message'] ?? '네트워크 오류가 발생했습니다. 다시 시도해주세요.';
-        _state = AuthState.error; // ⭐️ 일반 오류 상태
+        _state = AuthState.error;
       }
       return false;
     } catch (e) {
       _currentUser = null;
       _errorMessage = '예상치 못한 오류가 발생했습니다: ${e.toString()}';
-      _state = AuthState.error; // ⭐️ 일반 오류 상태
+      _state = AuthState.error;
       return false;
     } finally {
       notifyListeners();
