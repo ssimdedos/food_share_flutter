@@ -18,28 +18,28 @@ class StompFrame {
 
     return '$command\n$headerString\n\n$bodyString\u0000';
   }
-  
-  StompFrame toStompFrame(String data) {
-    final lines = data.split("\n");
-    final command = lines[0];
-    final Map<String, String> headers = {};
-    String? body = "";
-    var headerEndIndex = -1;
+}
 
-    for (var i = 1; i < lines.length; i++) {
-    if (lines[i] == "") {
-    headerEndIndex = i;
-    break;
-    }
-    final parts = lines[i].split(":");
-    final key = parts[0];
-    final value = parts.sublist(1).join(":").trim();
-    headers[key] = value;
-    }
+StompFrame toStompFrame(String data) {
+  final lines = data.split("\n");
+  final command = lines[0];
+  final Map<String, String> headers = {};
+  String? body = "";
+  var headerEndIndex = -1;
 
-    if (headerEndIndex != -1) {
-      body = lines.sublist(headerEndIndex + 1).join('\n').replaceAll('\u0000', '');
-    }
-    return StompFrame(command: command, headers: headers, body: body);
+  for (var i = 1; i < lines.length; i++) {
+  if (lines[i] == "") {
+  headerEndIndex = i;
+  break;
   }
+  final parts = lines[i].split(":");
+  final key = parts[0];
+  final value = parts.sublist(1).join(":").trim();
+  headers[key] = value;
+  }
+
+  if (headerEndIndex != -1) {
+    body = lines.sublist(headerEndIndex + 1).join('\n').replaceAll('\u0000', '');
+  }
+  return StompFrame(command: command, headers: headers, body: body);
 }
