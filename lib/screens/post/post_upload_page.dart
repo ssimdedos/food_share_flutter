@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:go_router/go_router.dart';
+import 'package:oasis/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -69,7 +70,8 @@ class _PostUploadPageState extends State<PostUploadPage> {
 
   void _submitPost() async {
     final title = _titleController.text;
-    final author = 'ideademisdedos';
+    final author = context.read<AuthProvider>().currentUser!.username;
+    final authorId = context.read<AuthProvider>().currentUser!.id;
     final description = _descriptionController.text;
 
     if (title.isEmpty || description.isEmpty || _selectedExpirationDate == null || _images.first.path.isEmpty) {
@@ -83,6 +85,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
       final resData = await context.read<FoodPostProvider>().createFoodPost(
         title,
         author,
+        authorId,
         description,
         _images,
         _selectedExpirationDate!,

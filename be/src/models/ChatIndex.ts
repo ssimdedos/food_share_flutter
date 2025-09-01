@@ -1,4 +1,3 @@
-import sequelize from "../config/database";
 import User from "./User";
 import ChatRoom from "./ChatRoom";
 import Message from "./Message";
@@ -18,4 +17,4 @@ User.belongsToMany(ChatRoom, { through: ChatRoomParticipant, foreignKey: 'userId
 ChatRoom.belongsToMany(User, { through: ChatRoomParticipant, foreignKey: 'roomId' });
 
 // 모델 내보내기
-export { sequelize, User, ChatRoom, Message, ChatRoomParticipant };
+export { User, ChatRoom, Message, ChatRoomParticipant };

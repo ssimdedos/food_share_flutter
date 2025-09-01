@@ -1,12 +1,13 @@
 import Food from "../models/Food";
 
 export const getAllFoods = async ():Promise<Food[] | null> => {
-  return await Food.findAll({ attributes: ['id', 'title', 'thumbnailUrl', 'createdAt'], order: [['createdAt', 'ASC']]});
+  return await Food.findAll({ attributes: ['id', 'authorId', 'title', 'thumbnailUrl', 'createdAt'], order: [['createdAt', 'ASC']]});
 }
 
 export const _createFoodPost = async (
   postData: {
-    author: string; 
+    author: string;
+    authorId: number; 
     title: string; 
     description: string; 
     imageUrl: string; 

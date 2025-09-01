@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:oasis/providers/auth_provider.dart';
+import 'package:oasis/providers/chat_provider.dart';
 import 'package:oasis/providers/food_post_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -27,6 +29,21 @@ class _PostDetailPageState extends State<PostDetailPage> {
   void dispose() {
     _imgController.dispose();
     super.dispose();
+  }
+  Future<void> onChat() async {
+    try {
+      final roomId = await context.read<ChatProvider>().createChat(
+        context.read<FoodPostProvider>().post!.id,
+        context.read<FoodPostProvider>().post!.authorId,
+        context.read<AuthProvider>().currentUser!.id,
+      );
+      if (!mounted) {
+        return;
+      }
+      context.push('/chat/$roomId');
+    } catch (err) {
+      print('채팅 생성 에러: $err');
+    }
   }
   @override
   Widget build(BuildContext context) {
@@ -126,6 +143,11 @@ class _PostDetailPageState extends State<PostDetailPage> {
                           ),
                           const SizedBox(height: 8),
                           Text(
+                            '작성자: ${post.author}',
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
                             '유통기한: ${post.expirationDate.toLocal().toString().split(' ')[0]}',
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
@@ -138,6 +160,12 @@ class _PostDetailPageState extends State<PostDetailPage> {
                           Text(
                             post.description,
                             style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          ElevatedButton(
+                            onPressed: onChat,
+                            child: Text(
+                              '채팅하기'
+                            ),
                           ),
                         ],
                       ),

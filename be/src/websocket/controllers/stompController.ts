@@ -64,9 +64,8 @@ const handleStompMessage = (ws: CustomWebSocket, message: Buffer) => {
         }
         subscribers.get(destination)?.add(ws);
         console.log(
-          `Client subscribed to: ${destination}. Total subscribers for ${destination}: ${
-            subscribers.get(destination)?.size
-          }`
+          `Client subscribed to: ${destination}. Total subscribers for ${destination}: 
+          ${subscribers.get(destination)?.size}`
         );
         if (headers.receipt) {
           ws.send(`RECEIPT\nreceipt-id:${headers.receipt}\n\n\0`);

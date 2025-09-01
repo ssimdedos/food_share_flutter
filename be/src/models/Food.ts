@@ -6,6 +6,7 @@ interface FoodAttributes {
   id: number;
   title: string;
   author: string;
+  authorId: number;
   description: string;
   imageUrl: string;
   thumbnailUrl: string;
@@ -19,6 +20,7 @@ class Food extends Model<FoodAttributes, FoodCreationAttributes> implements Food
   public id!: number;
   public title!: string;
   public author!: string;
+  public authorId!: number;
   public description!: string;
   public imageUrl!: string;
   public thumbnailUrl!: string;
@@ -33,7 +35,8 @@ Food.init({
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
-    primaryKey: true
+    primaryKey: true,
+    allowNull: false
   },
   title: {
     type: DataTypes.STRING,
@@ -41,6 +44,10 @@ Food.init({
   },
   author: {
     type: DataTypes.STRING,
+    allowNull: false
+  },
+  authorId: {
+    type: DataTypes.INTEGER,
     allowNull: false
   },
   description: {
@@ -64,8 +71,9 @@ Food.init({
   },
 }, {
   sequelize,
-  tableName: 'Foods',
-  paranoid: true
+  tableName: 'foods',
+  paranoid: true,
+  underscored: true
 });
 
 export default Food;

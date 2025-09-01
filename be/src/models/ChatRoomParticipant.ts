@@ -1,25 +1,26 @@
 import { DataTypes, Model, Optional } from "sequelize";
 import sequelize from "../config/database";
+import ChatRoom from "./ChatRoom";
 
 interface ChatRoomParticipantAttributes {
-  roomId: number;
+  id: number;
   userId: number;
 }
 
-interface ChatRoomParticipantCreationAttributes extends Optional<ChatRoomParticipantAttributes, 'roomId' | 'userId'> {}
+interface ChatRoomParticipantCreationAttributes extends Optional<ChatRoomParticipantAttributes, 'id' | 'userId'> {}
 
 class ChatRoomParticipant extends Model<ChatRoomParticipantAttributes, ChatRoomParticipantCreationAttributes> implements ChatRoomParticipantAttributes {
-  public roomId!: number;
+  public id!: number;
   public userId!: number;
 
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  public readonly joinedAt!: Date;
 }
 
 ChatRoomParticipant.init({
-  roomId: {
+  id: {
     type: DataTypes.INTEGER,
-    primaryKey: true
+    primaryKey: true,
+    field: 'room_id'
   },
   userId: {
     type: DataTypes.INTEGER,
@@ -28,8 +29,9 @@ ChatRoomParticipant.init({
 }, {
   sequelize,
   tableName: 'chat_room_participants',
-  timestamps: true,
-  paranoid: false // soft-delete 필요 없음
+  paranoid: false, // soft-delete 필요 없음
+  timestamps: false,
+  underscored: true
 });
 
 export default ChatRoomParticipant;

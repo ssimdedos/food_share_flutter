@@ -36,13 +36,14 @@ class FoodPostProvider extends ChangeNotifier {
   Future<CreatedPost> createFoodPost(
       String title,
       String author,
+      int authorId,
       String description,
       List<XFile> imgFiles,
       DateTime expirationDate) async {
     _state = FoodPostState.loading;
     notifyListeners();
     try {
-      final resData = await _foodApi.createFoodPost(title, author, description, imgFiles, expirationDate);
+      final resData = await _foodApi.createFoodPost(title, author, authorId, description, imgFiles, expirationDate);
       _state = FoodPostState.success;
       return resData;
     } catch (e) {

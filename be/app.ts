@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import sequelize from "./src/config/database";
 import mainRouter from "./src/routers/mainRouter";
+import './src/models';
 
 // 채팅 관련
 import http from 'http';

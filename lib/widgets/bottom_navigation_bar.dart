@@ -41,7 +41,7 @@ class IndexView extends StatefulWidget {
 
 class _IndexViewState extends State<IndexView> with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  int _index = 2;
+  int _index = 0;
 
   void tabListener() {
     setState(() {

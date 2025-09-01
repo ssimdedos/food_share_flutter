@@ -1,12 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
-
+import 'package:dio/dio.dart';
 import 'package:oasis/models/stomp_model.dart';
+import 'package:oasis/utils/dio_client.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class ChatService {
-
+  final Dio _dio = dio;
   WebSocketChannel? _channel;
 
   final StreamController<StompFrame> _stompFrameController = StreamController<StompFrame>.broadcast();
@@ -41,20 +42,27 @@ class ChatService {
     }
   }
 
-  void subscribeToTopic(String topic) {
+  Future<String> enterChat(int postId, int authorId, int userId) async {
+    final res = await dio.post('/chat/enter', data: {'postId': postId, 'authorId':authorId, 'userId': userId});
+    final roomId = res.data['roomId'] as String;
+      subscribeToTopic(roomId);
+      return roomId;
+  }
+
+  void subscribeToTopic(String roomId) {
     sendStompFrame(StompFrame(
       command: 'SUBSCRIBE',
       headers: {
-        'id': 'sub-${topic.replaceAll('/', '')}',
-        'destination': topic,
+        'id': 'sub-chat-$roomId',
+        'destination': 'topic/chat/$roomId',
       },
     ));
-    print('STOMP: Subscribed to $topic');
+    print('STOMP: Subscribed to $roomId');
   }
 
-  void sendMessage(String topic, String sender, String content) {
+  void sendMessage(String topic, int sender, String content) {
     final body = jsonEncode({
-      'sender': sender,
+      'sender': '$sender',
       'content': content,
     });
 
@@ -75,5 +83,9 @@ class ChatService {
       return;
     }
     _channel!.sink.add(frame.toStompString());
+  }
+
+  Future<List> getMessages(String roomId) async {
+    final res = await _dio.get('chat/messages/$roomId');
   }
 }

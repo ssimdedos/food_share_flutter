@@ -26,6 +26,7 @@ class FoodApiService {
   Future<CreatedPost> createFoodPost(
       String title,
       String author,
+      int authorId,
       String description,
       List<XFile> imgFiles,
       DateTime expirationDate) async {
@@ -48,6 +49,7 @@ class FoodApiService {
       FormData formData = FormData.fromMap({
         "title": title,
         "author": author,
+        "authorId": authorId,
         "description": description,
         "images": futures,
         "expirationDate": expirationDate.toIso8601String()

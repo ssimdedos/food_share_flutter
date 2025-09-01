@@ -6,6 +6,7 @@ class FoodPost {
   final String title;
   final List<String> imageUrl;
   final String author;
+  final int authorId;
   final String description;
   final DateTime expirationDate;
   final DateTime createdAt;
@@ -16,6 +17,7 @@ class FoodPost {
     required this.title,
     required this.imageUrl,
     required this.author,
+    required this.authorId,
     required this.description,
     required this.expirationDate,
     required this.createdAt,
@@ -55,6 +57,7 @@ class FoodPost {
       title: json['title'] as String,
       imageUrl: parsedImageUrls,
       author: json['author'] as String,
+      authorId: json['authorId'] as int,
       description: json['description'] as String,
       expirationDate: DateTime.parse(json['expirationDate'] as String),
       createdAt: DateTime.parse(json['createdAt'] as String),

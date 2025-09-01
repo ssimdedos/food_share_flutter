@@ -11,7 +11,7 @@ export const getFoods = async (req: Request, res: Response, next: NextFunction) 
 }
 
 export const createFoodPost = async (req: Request, res: Response, next: NextFunction) => {
-  const { title, author,description, expirationDate } = req.body;
+  const { title, author, authorId, description, expirationDate } = req.body;
   let imageUrls = [];
   let thumbnailUrl = '';
   const fileArray =  req.files ? req.files as Express.Multer.File[] : [];
@@ -23,12 +23,13 @@ export const createFoodPost = async (req: Request, res: Response, next: NextFunc
       imageUrls.push(url);
     }
     thumbnailUrl = imageUrls[0] ? imageUrls[0] : `${process.env.SERVER_URL}/images/content_img.jpg`;
-    console.log(imageUrls.toString());
+    // console.log(imageUrls.toString());
     const postData = {
       title,
       author,
+      authorId: parseInt(authorId),
       description,
-      expirationDate,
+      expirationDate: new Date(expirationDate as string),
       'imageUrl':imageUrls.toString(),
       thumbnailUrl,
     }
